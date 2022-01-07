@@ -18,6 +18,6 @@
                "rove")
   :components ((:module "tests"
                 :components
-                ((:file "cpj"))))
+                ((:file "tkutil"))))
   :description "Test system for tkutil"
   :perform (test-op (op c) (symbol-call :rove :run c)))
