@@ -7,7 +7,8 @@
                "cl-reexport"
                "log4cl")
   :components ((:module "src"
-                :components ((:file "util"))))
+                :components ((:file "util")
+                             (:file "auth"))))
   :description "Tiny Common Lisp Utilities."
   :in-order-to ((test-op (test-op "tkutil/tests"))))
 
