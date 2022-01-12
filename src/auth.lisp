@@ -7,7 +7,10 @@
            #:%admin-user-p
            #:admin-user-p
            #:check-admin-user
+           #:find-user
+           #:friendly-user-name
            #:auth-user
+           #:check-user-availability
            #:bad-password
            #:check-password))
 (in-package :tkutil.auth)
@@ -47,9 +50,15 @@
   (unless (admin-user-p user)
     (error 'not-admin-user :user user)))
 
+(defgeneric find-user (user))
+
+(defgeneric friendly-user-name (user))
+
 (defgeneric auth-user (user password))
 
-(define-condition bad-password (error)
+(defgeneric check-user-availability (user))
+
+(define-condition bad-password (tkutil.exception:exception)
   ())
 
 (defun check-password (password password-confirm &key blank-allowed)
