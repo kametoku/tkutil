@@ -32,7 +32,7 @@
   (:documentation "Returns error message for users.")
   (:method (condition)
     (values (format nil "~A" condition)
-            t)))
+            nil)))
 
 (defgeneric exception-diagnostic (condition)
   (:method (condition)
