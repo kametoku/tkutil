@@ -50,13 +50,23 @@
   (unless (admin-user-p user)
     (error 'not-admin-user :user user)))
 
-(defgeneric find-user (user))
+(defgeneric find-user (indicator)
+  (:documentation "Find a user by INDICATOR.
+The indicator would be email address, user id, user name, and so on
+to identify the user."))
 
-(defgeneric friendly-user-name (user))
+(defgeneric friendly-user-name (user)
+  (:documentation "Return a friendly user name of USER."))
 
-(defgeneric auth-user (user password))
+(defgeneric auth-user (user password)
+  (:documentation "Authenticate USER by PASSWORD.
+On success, the function returns a user object.
+Otherwise, it will signal an error."))
 
-(defgeneric check-user-availability (user))
+(defgeneric check-user-availability (user)
+  (:documentation "Check the availability of USER.
+If the user is not available (e.g., the user account is locked or disabled),
+the function will signal an error."))
 
 (define-condition bad-password (tkutil.exception:exception)
   ())
