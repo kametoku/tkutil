@@ -9,7 +9,8 @@
   :components ((:module "src"
                 :components ((:file "util")
                              (:file "exception")
-                             (:file "auth"))))
+                             (:file "auth")
+                             (:file "csv"))))
   :description "Tiny Common Lisp Utilities."
   :in-order-to ((test-op (test-op "tkutil/tests"))))
 
