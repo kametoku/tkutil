@@ -3,6 +3,7 @@
   :author "Tokuya Kameshima"
   :license "LLGPL"
   :depends-on ("alexandria"
+               "cl-ftp"
                "cl-ppcre"
                "cl-reexport"
                "log4cl")
@@ -10,7 +11,8 @@
                 :components ((:file "util")
                              (:file "exception")
                              (:file "auth")
-                             (:file "csv"))))
+                             (:file "csv")
+                             (:file "ftp"))))
   :description "Tiny Common Lisp Utilities."
   :in-order-to ((test-op (test-op "tkutil/tests"))))
 
