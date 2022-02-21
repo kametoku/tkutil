@@ -13,6 +13,9 @@
            #:set-slot
            #:set-slot-if
            #:set-slot-if-not
+           #:setf-init
+           #:setf-init-string
+           #:setf-pred
            #:ignore-errors-log
            ))
 (in-package :tkutil)
@@ -86,6 +89,60 @@
 (defmacro set-slot-if-not (test-not object accessor value)
   `(set-slot ,object ,accessor ,value :test-not ,test-not))
 
+
+(defmacro setf-init (place value &key initial-value test test-not)
+  "Change the value of PLACE to VALUE
+when the value of PLACE is INITIAL-VALUE and VALUE is not nil
+or VALUE satisfies TEST or NOT-TEST."
+  (let ((gvalue (gensym))
+        (ginitial-value (gensym))
+        (gtest (gensym))
+        (gtest-not (gensym)))
+    `(let ((,gvalue ,value)
+           (,ginitial-value ,initial-value)
+           (,gtest ,test)
+           (,gtest-not ,test-not))
+;;        (when (and (equal ,place ,initial-value)
+       (when (and (cond ((functionp ,ginitial-value)
+                         (funcall ,ginitial-value ,place))
+                        ((equal ,place ,initial-value)))
+                  (cond ((functionp ,gtest)
+                         (funcall ,gtest ,gvalue))
+                        ((functionp ,gtest-not)
+                         (not (funcall ,gtest-not ,gvalue)))
+                        (t ,gvalue)))
+         (setf ,place ,gvalue)))))
+
+(defmacro setf-init-string (place value)
+  `(setf-init ,place ,value :initial-value #'blankp :test-not #'blankp))
+
+(defmacro setf-pred (place value &key predicate predicate-not)
+  "Change the value of PLACE to VALUE
+when VALUE is non nil and the value of PLACE is nil or is not equal to VALUE.
+
+If PREDICATE or PREDICATE-NOT is specified,
+the value is changed per the result of PREDICATE or PREDICATE-NOT.
+The first arguments to PREDICATE or PREDICATE-NOT is PLACE
+and the second one is VALUE.
+The value of PLACE is changed when PREDICATE returns non-nil or
+PREDICATE-NOT returns nil."
+  (let ((gvalue (gensym))
+        (gpredicate (gensym))
+        (gpredicate-not (gensym))
+        (gplace-value (gensym)))
+    `(let ((,gvalue ,value)
+           (,gpredicate ,predicate)
+           (,gpredicate-not ,predicate-not))
+       (when ,gvalue
+         (let ((,gplace-value ,place))
+           (when (cond ((not ,gplace-value))
+                       ((or ,gpredicate ,gpredicate-not)
+                        (or (and ,gpredicate
+                                 (funcall ,gpredicate ,gplace-value ,gvalue))
+                            (and ,gpredicate-not
+                                 (not (funcall ,gpredicate-not ,gplace-value ,gvalue)))))
+                       (t (not (equal ,gplace-value ,gvalue))))
+             (setf ,place ,gvalue)))))))
 
 (defmacro ignore-errors-log (&rest forms)
   "Same as the standard `ignore-errors', but logs the condition that was caught."
