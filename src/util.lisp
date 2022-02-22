@@ -17,6 +17,7 @@
            #:setf-init-string
            #:setf-pred
            #:ignore-errors-log
+           #:with-hash-table
            ))
 (in-package :tkutil)
 
@@ -151,3 +152,19 @@ PREDICATE-NOT returns nil."
        (log:warn "Error occurred but ignored: ~A: ~A"
                  (type-of condition) condition)
        (values nil condition))))
+
+(defmacro with-hash-table (hash-table key &body body)
+  "Find the entry in HASH-TABLE whose key is KEY and return the asociated
+value and T as multiple values.
+If there is no such entry, BODY is executed, the result is added to HASH-TABLE,
+and the result is returned.
+If HASH-TABLE is nil, BODY is always executed and the result is returned."
+  (let ((gkey (gensym))
+        (gvalue (gensym)))
+    `(if ,hash-table
+         (let* ((,gkey ,key)
+                (,gvalue (gethash ,gkey ,hash-table)))
+           (if ,gvalue
+               (values ,gvalue t)
+               (setf (gethash ,gkey ,hash-table) (progn ,@body))))
+         (progn ,@body))))
