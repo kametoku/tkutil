@@ -17,6 +17,7 @@
            #:setf-init-string
            #:setf-pred
            #:ignore-errors-log
+           #:make-hash-table-from-list
            #:with-hash-table
            ))
 (in-package :tkutil)
@@ -153,6 +154,19 @@ PREDICATE-NOT returns nil."
                  (type-of condition) condition)
        (values nil condition))))
 
+(defun make-hash-table-from-list (list key-func &rest args
+                                  &key test size rehash-size rehash-threshold
+                                    hash-function weakness synchronized)
+  "Make a hash table from LIST.
+Optional keyword arguments are the same as make-hash-table's."
+  (declare (ignore test size rehash-size rehash-threshold
+                   hash-function weakness synchronized))
+  (let ((hash-table (apply #'make-hash-table args)))
+    (loop for entry in list
+          for key = (funcall key-func entry)
+          do (setf (gethash key hash-table) entry))
+    hash-table))
+
 (defmacro with-hash-table (hash-table key &body body)
   "Find the entry in HASH-TABLE whose key is KEY and return the asociated
 value and T as multiple values.
@@ -166,5 +180,8 @@ If HASH-TABLE is nil, BODY is always executed and the result is returned."
                 (,gvalue (gethash ,gkey ,hash-table)))
            (if ,gvalue
                (values ,gvalue t)
+;;                (progn
+;;                  (log:debug "hit hash table" ,gkey)
+;;                  (values ,gvalue t))
                (setf (gethash ,gkey ,hash-table) (progn ,@body))))
          (progn ,@body))))
