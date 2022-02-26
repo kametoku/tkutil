@@ -41,8 +41,9 @@
           string))))
 
 (defun to-integer (string &key default)
-  (or (and string (parse-integer string :junk-allowed t))
-      default))
+  (cond ((integerp string) string)
+        ((and string (parse-integer string :junk-allowed t)))
+        (t default)))
 
 (defun blankp (value)
   (cond ((not value))
