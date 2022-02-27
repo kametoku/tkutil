@@ -19,6 +19,7 @@
            #:ignore-errors-log
            #:make-hash-table-from-list
            #:with-hash-table
+           #:remove-duplicates-plist
            ))
 (in-package :tkutil)
 
@@ -186,3 +187,11 @@ If HASH-TABLE is nil, BODY is always executed and the result is returned."
 ;;                  (values ,gvalue t))
                (setf (gethash ,gkey ,hash-table) (progn ,@body))))
          (progn ,@body))))
+
+(defun remove-duplicates-plist (plist &rest args &key test start end from-end)
+  "Remove the paris of the duplicated keys in PLIST.
+Earlier occurrence is removed unless FROM-END is non-nil."
+  (declare (ignore test start end from-end))
+  (alexandria:alist-plist
+   (apply #'remove-duplicates (alexandria:plist-alist plist)
+          :key #'car args)))
