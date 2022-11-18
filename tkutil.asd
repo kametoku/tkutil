@@ -11,6 +11,7 @@
                 :components ((:file "util")
                              (:file "exception")
                              (:file "auth")
+                             (:file "config")
                              (:file "csv")
                              (:file "ftp"))))
   :description "Tiny Common Lisp Utilities."
