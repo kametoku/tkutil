@@ -3,9 +3,11 @@
   :author "Tokuya Kameshima"
   :license "LLGPL"
   :depends-on ("alexandria"
+               "cl-csv"
                "cl-ftp"
                "cl-ppcre"
                "cl-reexport"
+               "envy"
                "log4cl")
   :components ((:module "src"
                 :components ((:file "util")
